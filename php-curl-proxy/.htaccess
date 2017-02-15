@@ -1,8 +1,6 @@
 RewriteEngine On
 
-# Rewrite-Base should match $proxyRelUri in proxy.php
-RewriteBase /remote-sub-dir
-
+RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule .* index.php [L]
+RewriteCond $0#%{REQUEST_URI} ([^#]*)#(.*)\1$
+RewriteRule ^.*$ index.php [QSA,L]
