@@ -1,16 +1,16 @@
 <?php
 namespace App\Database;
 
-use stdClass;
-use DOMXPath;
-use XMLReader;
-use DOMDocument;
+use \stdClass;
+use \DOMXPath;
+use \XMLReader;
+use \DOMDocument;
 
 /**
- * Class ParseXmlToModel
- * @package App\Database
+ * Class XmlParser
+ * @package App\Console\Tasks\Feed\Reader
  */
-class ParseXmlToModel
+class XmlParser
 {
     /**
      * @var \XMLReader
@@ -28,15 +28,48 @@ class ParseXmlToModel
     protected $ignoreCommentNodes = true;
 
 
-    public function __construct(string $URI, $ignoreCommentNodes = true)
+    public function __construct($ignoreCommentNodes = true)
     {
         $this->xmlReader = new XMLReader();
-        $this->xmlReader->open($URI);
-
         $this->ignoreCommentNodes = $ignoreCommentNodes;
+    }
 
-        // Fetch Root-Node
-        $this->parseRootNode();
+    /**
+     * @param string $file
+     * @param null $encoding
+     * @param int $options A bitmask of the LIBXML_*
+     * @return bool
+     */
+    public function loadFile(string $file, $encoding = null, $options = 0) : bool
+    {
+        if($this->xmlReader->open($file, $encoding, $options))
+        {
+            // Fetch Root-Node
+            $this->parseRootNode();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $xml
+     * @param null $encoding
+     * @param int $options A bitmask of the LIBXML_*
+     * @return bool
+     */
+    public function loadXML(string $xml, $encoding = null, $options = 0) : bool
+    {
+        if($this->xmlReader->XML($xml, $encoding, $options))
+        {
+            // Fetch Root-Node
+            $this->parseRootNode();
+
+            return true;
+        }
+
+        return false;
     }
 
     protected function parseRootNode()
