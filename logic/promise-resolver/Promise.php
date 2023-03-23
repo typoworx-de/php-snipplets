@@ -133,6 +133,11 @@ class Promise implements PromiseInterface
         return $this->propagadeRejected;
     }
 
+    private function isFailed() : bool
+    {
+        return $this->isFailed;
+    }
+
     public function resolver(callable $resolver) : self
     {
         $this->callableResolver = $resolver;
