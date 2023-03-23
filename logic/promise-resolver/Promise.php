@@ -96,6 +96,14 @@ class Promise implements PromiseInterface
             {
                 $this->result = $return;
             }
+            else if ($callable instanceof $this->callbackReject)
+            {
+                $this->isFailed = true;
+            }
+            else if ($callable instanceof $this->callbackCatch)
+            {
+                $this->isFailed = true;
+            }
         }
 
         return $this;
