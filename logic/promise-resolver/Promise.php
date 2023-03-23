@@ -4,7 +4,7 @@ namespace TYPOworx\Promise;
 
 /**
  * Promise/Resolver
- * 
+ *
  * Promise::create()
  *   ->resolver(function() use($request, $options) {
  *       // $this is in scope of Promise!
@@ -28,6 +28,7 @@ namespace TYPOworx\Promise;
  */
 class Promise implements PromiseInterface
 {
+    private bool $isResolved = false;
     private bool $propagadeRejected = false;
     private bool $propagadeSuccessful = false;
 
@@ -133,12 +134,18 @@ class Promise implements PromiseInterface
 
     public function resolve() : void
     {
+        if ($this->isResolved)
+        {
+            return;
+        }
+
         try
         {
             $this->call($this->callableResolver);
 
             if ($this->result || $this->propagadeSuccessful = true)
             {
+                $this->isResolved = true;
                 $this->call($this->callbackThen);
             }
             else
