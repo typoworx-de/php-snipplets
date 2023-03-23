@@ -172,6 +172,11 @@ class Promise implements PromiseInterface
 
     public function getResult() : mixed
     {
+        if ($this->isResolved)
+        {
+            $this->resolve();
+        }
+        
         return $this->result;
     }
 }
