@@ -7,6 +7,10 @@ namespace TYPOworx\FwfSearchbar\Api\Promise;
  * 
  * Promise::create()
  *   ->resolver(function() use($request, $options) {
+ *       // $this is in scope of Promise!
+ *       $this->propagadeRejected();    // Will force our promise to be rejected
+ *       $this->propagadeSuccess();     // Will force our promise to be successful even if we didn't process it at all
+ *
  *       return $request->apiRequest($options);
  *   })
  *   ->then(function() {
