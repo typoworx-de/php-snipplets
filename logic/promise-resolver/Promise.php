@@ -15,6 +15,7 @@ namespace TYPOworx\Promise;
  *   })
  *   ->then(function() {
  *      // Proceed on success
+ *      var_dump($this->getResult());
  *   })
  *   ->rejected(function() {
  *      // React on reject
