@@ -7,6 +7,7 @@ class Promise implements PromiseInterface
     use PromiseTrait {
       // In case one wants to customize this name for custom contexts
       //PromiseTrait::evaluate as expects;
+      //PromiseTrait::reject as failed;
     }
 
     public static function create() : self
