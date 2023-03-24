@@ -6,6 +6,8 @@ interface PromiseInterface
 {
     public function resolver(callable $resolver) : PromiseInterface;
 
+    public function expects(callable $onEvaluate) : PromiseInterface;
+
     public function then(?callable $onFulfilled = null, ?callable $onRejected = null): PromiseInterface;
 
     public function reject(callable $onRejected) : PromiseInterface;
