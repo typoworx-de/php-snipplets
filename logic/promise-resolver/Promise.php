@@ -5,7 +5,7 @@ namespace TYPOworx\Promise;
 class Promise implements PromiseInterface
 {
     use PromiseTrait {
-        evaluate as expects;
+        PromiseTrait::evaluate as expects;
     }
 
     public static function create() : self
