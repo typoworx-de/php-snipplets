@@ -105,18 +105,19 @@ trait PromiseTrait
 
             if ($callable instanceof $this->callableResolver)
             {
+                if ($callable instanceof $this->callbackEvaluate)
+                {
+                    if ($return === null || $return === false)
+                    {
+                        $this->propagadeFailed();
+                    }
+                }
+
                 $this->result = $return;
             }
             else if ($callable instanceof $this->callbackReject)
             {
                 $this->propagadeFailed = true;
-            }
-            else if ($callable instanceof $this->callbackEvaluate)
-            {
-                if ($return === null || $return === false)
-                {
-                    $this->propagadeFailed = true;
-                }
             }
             else if ($callable instanceof $this->callbackCatch)
             {
@@ -127,18 +128,18 @@ trait PromiseTrait
         return $this;
     }
 
-    private function propagadeSuccessful() : void
+    protected function propagadeSuccessful() : void
     {
         $this->propagadeSuccessful = true;
         $this->propagadeRejected = false;
     }
 
-    private function isSuccessful() : bool
+    public function isSuccessful() : bool
     {
         return $this->propagadeSuccessful;
     }
 
-    private function propagadeRejected() : void
+    protected function propagadeRejected() : void
     {
         $this->propagadeSuccessful = false;
         $this->propagadeRejected = true;
@@ -156,11 +157,13 @@ trait PromiseTrait
         return $this->propagadeResolved;
     }
 
-    private function propagadeFailed() : void
+    protected function propagadeFailed() : void
     {
         $this->propagadeFailed = true;
         $this->propagadeSuccessful = false;
         $this->propagadeRejected = false;
+
+        throw new FailedThrowable();
     }
 
     public function isFailed() : bool
@@ -190,11 +193,11 @@ trait PromiseTrait
         try
         {
             $this->call($this->callableResolver);
+            $this->call($this->callbackEvaluate);
 
             if ($this->result || $this->propagadeSuccessful = true)
             {
                 $this->propagadeResolved = true;
-                $this->call($this->callbackEvaluate);
                 $this->call($this->callbackThen);
             }
             else
@@ -203,6 +206,10 @@ trait PromiseTrait
             }
 
             $this->call($this->callbackFinally);
+        }
+        catch (FailedThrowable $e)
+        {
+            $this->call($this->callbackReject);
         }
         catch (RejectedThrowable $e)
         {
