@@ -97,32 +97,36 @@ trait PromiseTrait
 
     private function call($callable, mixed ...$arguments) : self
     {
+        $return = null;
+        
         if (is_callable($callable))
         {
-            $return = \Closure::fromCallable($callable)
-                ->call($this, $arguments)
-            ;
-
-            if ($callable instanceof $this->callableResolver)
+            $return = \Closure::fromCallable($callable)->call($this, $arguments);
+        }
+        else if ($callable instanceof \Closure)
+        {
+            $return = $callable->call($this, $arguments);
+        }
+        
+        if ($callable instanceof $this->callableResolver)
+        {
+            if ($callable instanceof $this->callbackEvaluate)
             {
-                if ($callable instanceof $this->callbackEvaluate)
+                if ($return === null || $return === false)
                 {
-                    if ($return === null || $return === false)
-                    {
-                        $this->propagadeFailed();
-                    }
+                    $this->propagadeFailed();
                 }
+            }
 
-                $this->result = $return;
-            }
-            else if ($callable instanceof $this->callbackReject)
-            {
-                $this->propagadeFailed = true;
-            }
-            else if ($callable instanceof $this->callbackCatch)
-            {
-                $this->propagadeFailed = true;
-            }
+            $this->result = $return;
+        }
+        else if ($callable instanceof $this->callbackReject)
+        {
+            $this->propagadeFailed = true;
+        }
+        else if ($callable instanceof $this->callbackCatch)
+        {
+            $this->propagadeFailed = true;
         }
 
         return $this;
